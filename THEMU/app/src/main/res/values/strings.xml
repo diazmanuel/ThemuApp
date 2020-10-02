@@ -1,0 +1,55 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">THEMU</string>
+
+
+    <string name="lbl_frg_home">THEMU</string>
+    <string name="lbl_frg_session">Session</string>
+    <string name="lbl_frg_effect_list">Effects</string>
+    <string name="lbl_frg_effect">Effect</string>
+    <string name="lbl_frg_gesture_list">Gestures</string>
+    <string name="lbl_frg_gesture">Gesture</string>
+    <string name="lbl_frg_profile_list">Profiles</string>
+    <string name="lbl_frg_profile">Profile</string>
+    <string name="lbl_frg_record_list">Records</string>
+    <string name="lbl_frg_record">Record</string>
+
+    <string name="key_id">id</string>
+
+
+    <string name="title_gestures">Gestures</string>
+    <string name="title_home">Home</string>
+    <string name="title_records">Records</string>
+    <string name="title_effects">Effects</string>
+    <string name="title_profiles">Profiles</string>
+
+    <string name="cd_gestures">Gestures</string>
+    <string name="cd_home">Home</string>
+    <string name="cd_records">Records</string>
+    <string name="cd_effects">Effects</string>
+    <string name="cd_profiles">Profiles</string>
+
+    <string name="btn_startSession">Start Session</string>
+    <string name="btn_save">SAVE</string>
+    <string name="btn_create">CREATE</string>
+    <string name="hint_text_effect">Effect type</string>
+    <string name="hint_Name_Effect">EFFECT NAME</string>
+    <string name="action_toggle_mute">Toggle volume</string>
+    <string name="btn_cancel">CANCEL</string>
+    <string name="log_MCU">MCU CHANGE</string>
+    <string name="log_flex">flex change</string>
+    <string name="txt_menique">Little Finger</string>
+    <string name="txt_xAxis" >X AXIS</string>
+    <string name="txt_yAxis" >Y AXIS</string>
+    <string name="txt_zAxis" >Z AXIS</string>
+    <string name="txt_anular" >Ring Finger</string>
+    <string name="txt_medio" >Middle Finger</string>
+    <string name="txt_indice" >Index Finger</string>
+    <string name="txt_pulgar" >Thumb Finger</string>
+    <string name="txt_axis_default" >0.00</string>
+    <string name="hint_Name_Gesture">GESTURE NAME</string>
+    <string name="hint_emptyGesture">There are not gestures created</string>
+    <string name="hint_emptyEffect">There are not effects created</string>
+
+
+
+</resources>

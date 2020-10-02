@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#000040</color>
+    <color name="colorPrimaryDark">#000022</color>
+    <color name="colorAccent">#000040</color>
+
+    <color name="add_button">#000000</color>
+
+    <color name="bottomNavCont">#FFFFFF</color>
+    <color name="bottomNavOn">#000080</color>
+    <color name="bottomNavOff">#AAAAAA</color>
+
+    <color name="bottomFltIcon">#ffffff</color>
+    <color name="bottomFltCont">#000040</color>
+    <color name="txt">#000000</color>
+    <color name="txt2">#000040</color>
+    <color name="background">#ffffff</color>
+
+
+
+</resources>

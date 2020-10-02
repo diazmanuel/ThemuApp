@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+    <fragment
+        android:id="@+id/effectFragment"
+        android:name="com.gloves.themu.fragments.EffectFragment"
+        android:label="@string/lbl_frg_effect"
+        tools:layout="@layout/fragment_effect" />
+    <fragment
+        android:id="@+id/effectListFragment"
+        android:name="com.gloves.themu.fragments.EffectListFragment"
+        android:label="@string/lbl_frg_effect_list"
+        tools:layout="@layout/fragment_effect_list" >
+        <action
+            android:id="@+id/action_effectListFragment_to_effectFragment"
+            app:destination="@id/effectFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/gestureFragment"
+        android:name="com.gloves.themu.fragments.GestureFragment"
+        android:label="@string/lbl_frg_gesture"
+        tools:layout="@layout/fragment_gesture" />
+    <fragment
+        android:id="@+id/gestureListFragment"
+        android:name="com.gloves.themu.fragments.GestureListFragment"
+        android:label="@string/lbl_frg_gesture_list"
+        tools:layout="@layout/fragment_gesture_list" >
+        <action
+            android:id="@+id/action_gestureListFragment_to_gestureFragment"
+            app:destination="@id/gestureFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.gloves.themu.fragments.HomeFragment"
+        android:label="@string/lbl_frg_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_sessionFragment"
+            app:destination="@id/sessionFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.gloves.themu.fragments.ProfileFragment"
+        android:label="@string/lbl_frg_profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/profileListFragment"
+        android:name="com.gloves.themu.fragments.ProfileListFragment"
+        android:label="@string/lbl_frg_profile_list"
+        tools:layout="@layout/fragment_profile_list" >
+        <action
+            android:id="@+id/action_profileListFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/recordFragment"
+        android:name="com.gloves.themu.fragments.RecordFragment"
+        android:label="@string/lbl_frg_record"
+        tools:layout="@layout/fragment_record" />
+    <fragment
+        android:id="@+id/recordListFragment"
+        android:name="com.gloves.themu.fragments.RecordListFragment"
+        android:label="@string/lbl_frg_record_list"
+        tools:layout="@layout/fragment_record_list" >
+        <action
+            android:id="@+id/action_recordListFragment_to_recordFragment"
+            app:destination="@id/recordFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/sessionFragment"
+        android:name="com.gloves.themu.fragments.SessionFragment"
+        android:label="@string/lbl_frg_session"
+        tools:layout="@layout/fragment_session" />
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.gloves.themu.fragments.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+
+        <action
+            android:id="@+id/action_splashFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>
