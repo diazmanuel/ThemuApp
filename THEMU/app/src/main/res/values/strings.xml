@@ -49,7 +49,7 @@
     <string name="hint_Name_Gesture">GESTURE NAME</string>
     <string name="hint_emptyGesture">There are not gestures created</string>
     <string name="hint_emptyEffect">There are not effects created</string>
-
+    <string name="txt_null">null</string>
 
 
 </resources>

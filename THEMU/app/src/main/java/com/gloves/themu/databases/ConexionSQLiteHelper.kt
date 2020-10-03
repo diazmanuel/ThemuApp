@@ -6,7 +6,6 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.core.database.getIntOrNull
-import androidx.core.database.getStringOrNull
 import com.gloves.themu.classes.Effect
 import com.gloves.themu.classes.Gesture
 
@@ -76,7 +75,7 @@ class ConexionSQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE
         }
     }
     fun readGestures() : List<Gesture>  {
-        val gestures = mutableListOf<Gesture>()
+        val gestures: MutableList<Gesture> = mutableListOf()
         val cursor = db.rawQuery(
             "SELECT * FROM "+
                     Tables.Gestures.TABLE_GESTURES
