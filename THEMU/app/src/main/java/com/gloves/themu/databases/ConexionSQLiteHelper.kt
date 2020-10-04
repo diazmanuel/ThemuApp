@@ -1,6 +1,5 @@
 package com.gloves.themu.databases
 
-import android.app.ActionBar
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -8,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import androidx.core.database.getIntOrNull
 import com.gloves.themu.classes.Effect
 import com.gloves.themu.classes.Gesture
+import com.gloves.themu.classes.NativeInterface
 
 
 class ConexionSQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,null,DATABASE_VERSION) {
@@ -36,7 +36,7 @@ class ConexionSQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE
         onCreate(db)
     }
     fun insertGesture(gesture : Gesture){
-        values.put(Tables.Gestures.FIELD_GESTURE_USERSNAME,gesture.gestureUsersName)
+        values.put(Tables.Gestures.FIELD_GESTURE_USERSNAME,gesture.usersName)
         values.put(Tables.Gestures.FIELD_GESTURE_LITTLE,gesture.littleFinger)
         values.put(Tables.Gestures.FIELD_GESTURE_RING,gesture.ringFinger)
         values.put(Tables.Gestures.FIELD_GESTURE_MIDDLE,gesture.middleFinger)
@@ -76,7 +76,7 @@ class ConexionSQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE
     }
     fun readGestures() : List<Gesture>  {
         val gestures: MutableList<Gesture> = mutableListOf()
-        val cursor = db.rawQuery(
+        val cursor  = db.rawQuery(
             "SELECT * FROM "+
                     Tables.Gestures.TABLE_GESTURES
         ,null)
@@ -101,6 +101,56 @@ class ConexionSQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE
         }
         cursor.close()
         return gestures
+    }
+    fun readEffects(): List<Effect>{
+        val effects: MutableList<Effect> = mutableListOf()
+        var effectAux : Effect
+        var paramCount = 0
+        var pk = 0
+        //SELECT EFFECTS.* , PARAMETRES.VALUE from EFFECTS JOIN PARAMETRES ON EFFECTS.EFFECT_PK = PARAMETRES.PARAMETRE_FK ORDER BY PARAMETRES.PARAMETRE_PK ASC
+        val cursor = db.rawQuery(
+            "SELECT "+
+                    Tables.Effects.TABLE_EFFECTS+".* , "+
+                    Tables.Parameters.TABLE_PARAMETRES+"."+
+                    Tables.Parameters.FIELD_PARAMETRES_VALUE+
+                    " FROM "+
+                    Tables.Effects.TABLE_EFFECTS+
+                    " JOIN "+
+                    Tables.Parameters.TABLE_PARAMETRES+
+                    " ON "+
+                    Tables.Effects.TABLE_EFFECTS+
+                    "."+
+                    Tables.Effects.FIELD_EFFECT_PK +
+                    " = "+
+                    Tables.Parameters.TABLE_PARAMETRES+
+                    "."+
+                    Tables.Parameters.FIELD_PARAMETRES_FK+
+                    " ORDER BY "+
+                    Tables.Parameters.TABLE_PARAMETRES+
+                    "."+
+                    Tables.Parameters.FIELD_PARAMETRES_PK+
+                    " ASC"
+        ,null)
+        if (cursor.moveToFirst()){
+            do{
+                if(cursor.getInt(0)!=pk){
+                    pk=cursor.getInt((0))
+                    effectAux = NativeInterface.effectDescriptionMap[cursor.getString(1)]?.let {
+                        Effect(
+                            it
+                        )
+                    }!!
+                    effectAux.usersName = cursor.getString(2)
+                    effectAux.effectPK = pk
+                    effects.add(effectAux)
+                    paramCount = 0
+                }
+                effects[effects.size - 1].paramValues[paramCount]=cursor.getFloat(3)
+                paramCount++
+            }while (cursor.moveToNext())
+        }
+        cursor.close()
+        return  effects
     }
 
 }

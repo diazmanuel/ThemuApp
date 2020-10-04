@@ -51,9 +51,6 @@ class GestureListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val data = Bundle()
         data.putString(R.string.key_id.toString(),"0")
-
-
-
         btnAddGesture.setOnClickListener {
             findNavController().navigate(R.id.action_gestureListFragment_to_gestureFragment,data)
         }

@@ -159,6 +159,14 @@ class Ble (val context : Context){
             difVector[i] = oldVector[i] - newVector[i]
         }
         oldVector=newVector
+
+        Log.i(TAG, "current MCU data: "+
+                characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT,0).toString()+" - "+
+                characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT,4).toString()+" - "+
+                characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT,8).toString()+" - "+
+                characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT,12).toString()
+        )
+
         if(flexFlag){
             processGesture()
             flexFlag=false
@@ -174,15 +182,21 @@ class Ble (val context : Context){
     }
 
     private fun setFlex(characteristic: BluetoothGattCharacteristic) {
-        fingers[0] = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,0)
+        //fingers[0] = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,0)
 
-        /*for (i in 0..1){//deberia ir hasta el 4 pero se rompe, preguntar cuanto esta mandando
-            fingers[i] = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,i*2)
+        for (i in 0..4){
+            fingers[i] = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,i)
         }
 
-         */
 
-        Log.i(TAG, "current flex data: "+characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,0).toString() )
+
+        Log.i(TAG, "current flex data: "+
+                characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,0).toString()+" - "+
+                characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,1).toString()+" - "+
+                characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,2).toString()+" - "+
+                characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,3).toString()+" - "+
+                characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,4).toString()
+        )
         if(flexFlag){
             processGesture()
             flexFlag = false

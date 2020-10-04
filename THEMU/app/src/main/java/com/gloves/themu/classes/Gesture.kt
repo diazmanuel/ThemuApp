@@ -2,7 +2,7 @@ package com.gloves.themu.classes
 
 data class Gesture(
     val gesturePK : Int,
-    val gestureUsersName : String,
+    val usersName : String,
     val littleFinger : Int,
     val ringFinger : Int,
     val middleFinger : Int,

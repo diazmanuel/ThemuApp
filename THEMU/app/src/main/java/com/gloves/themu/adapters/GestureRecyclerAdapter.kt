@@ -37,9 +37,9 @@ class GestureRecyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
 
         class GestureViewHolder constructor(gestureView: View): RecyclerView.ViewHolder(gestureView){
-                val txtGestureItem: MaterialTextView = gestureView.txtGestureItem
+                private val txtGestureItem: MaterialTextView = gestureView.txtGestureItem
                 fun bind (gestureItem : Gesture){
-                        txtGestureItem.text = gestureItem.gestureUsersName
+                        txtGestureItem.text = gestureItem.usersName
                 }
         }
 
