@@ -55,7 +55,7 @@ class EffectListFragment : Fragment() {
     }
 
     private fun initRecyclerView(){
-        recyclerViewEffects.apply {
+        recyclerViewEffect.apply {
             layoutManager = LinearLayoutManager(requireContext())
             effectAdapter = EffectRecyclerAdapter()
             addItemDecoration(TopSpacingItemDecoration(30))

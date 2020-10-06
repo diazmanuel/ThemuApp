@@ -59,7 +59,7 @@ class GestureListFragment : Fragment() {
 
 
     private fun initRecyclerView(){
-        recyclerViewGestures.apply {
+        recyclerViewGesture.apply {
             layoutManager = LinearLayoutManager(requireContext())
             gestureAdapter = GestureRecyclerAdapter()
             addItemDecoration(TopSpacingItemDecoration(30))

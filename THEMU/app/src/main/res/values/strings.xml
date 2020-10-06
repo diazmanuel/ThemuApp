@@ -31,7 +31,7 @@
     <string name="btn_startSession">Start Session</string>
     <string name="btn_save">SAVE</string>
     <string name="btn_create">CREATE</string>
-    <string name="hint_text_effect">Effect type</string>
+    <string name="hint_text_effect">Effect</string>
     <string name="hint_Name_Effect">EFFECT NAME</string>
     <string name="action_toggle_mute">Toggle volume</string>
     <string name="btn_cancel">CANCEL</string>
@@ -47,9 +47,16 @@
     <string name="txt_pulgar" >Thumb Finger</string>
     <string name="txt_axis_default" >0.00</string>
     <string name="hint_Name_Gesture">GESTURE NAME</string>
-    <string name="hint_emptyGesture">There are not gestures created</string>
-    <string name="hint_emptyEffect">There are not effects created</string>
+    <string name="hint_emptyGesture">No gestures have been created</string>
+    <string name="hint_emptyEffect">No effects have been created</string>
+    <string name="hint_emptyProfile">No Profiles have been created</string>
     <string name="txt_null">null</string>
+    <string name="hint_Name_Profile">Profile Name</string>
+    <string name="hint_text_gesture">Gesture</string>
+    <string name="hint_text_effect_type">Effect Type</string>
+    <string name="txt_led">Feedback Led</string>
+    <string name="txt_0">0</string>
+
 
 
 </resources>
