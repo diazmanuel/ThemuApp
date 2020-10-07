@@ -67,11 +67,11 @@ class EffectFragment : Fragment() {
             findNavController().popBackStack()
         }
         btnEffectSave.setOnClickListener {
-            if (effect != null) {
-                effect!!.usersName = if (txtEffectName.text.isNotEmpty()) txtEffectName.text.toString() else "Default"
-                db?.insertEffect(effect!!)
-                }
-            findNavController().popBackStack()
+            effect?.let {
+                it.usersName = if (txtEffectName.text.isNotEmpty()) txtEffectName.text.toString() else "Default"
+                db?.insertEffect(it)
+                findNavController().popBackStack()
+            }
         }
         menuEffect.setOnItemClickListener { parent, _, position, _ ->
 

@@ -11,21 +11,31 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import com.gloves.themu.R
+import com.gloves.themu.activitys.MainActivity
 import com.gloves.themu.classes.Effect
 import com.gloves.themu.classes.NativeInterface
+import com.gloves.themu.classes.Profile
+import com.gloves.themu.databases.ConexionSQLiteHelper
 import kotlinx.android.synthetic.main.fragment_session.*
 
 class SessionFragment : Fragment() {
 
-    private var id:String? = null
+    private var id:Int? = null
     private var isAudioEnabled: Boolean = false
+    private var db: ConexionSQLiteHelper? = null
+    private lateinit var profile : Profile
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            id = it.getString(R.string.key_id.toString())
+            id = it.getInt(R.string.key_id.toString())
         }
+        db= ConexionSQLiteHelper(requireContext())
+        profile = db?.readProfiles()?.find { it.profilePK == id  }!!
 
+
+        (activity as MainActivity).myBle.openSession(::process)
     }
 
     override fun onCreateView(
@@ -60,9 +70,13 @@ class SessionFragment : Fragment() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         NativeInterface.destroyAudioEngine()
-    }
+        (activity as MainActivity).myBle.closeSession()
 
+    }
+    fun process(fingers :IntArray,vector : FloatArray){
+
+    }
 }

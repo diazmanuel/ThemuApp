@@ -29,6 +29,8 @@ class Ble (val context : Context){
     var difVector = floatArrayOf(0f,0f,0f)
     private var mcuFlag: Boolean = false
     private var flexFlag: Boolean = false
+    private var process : ((IntArray,FloatArray) -> Unit)? = null
+
     fun start(){
 
         val handler = Handler()
@@ -168,7 +170,7 @@ class Ble (val context : Context){
         )
 
         if(flexFlag){
-            processGesture()
+            process?.let { it(fingers,newVector) }
             flexFlag=false
             mcuFlag = false
         }else{
@@ -176,9 +178,12 @@ class Ble (val context : Context){
         }
 
     }
-
-    private fun processGesture() {
-        //
+    fun openSession(myProcess: (IntArray,FloatArray) -> Unit){
+        // invoke regular function using local name
+        process = myProcess
+    }
+    fun closeSession(){
+        process = null
     }
 
     private fun setFlex(characteristic: BluetoothGattCharacteristic) {
@@ -198,7 +203,7 @@ class Ble (val context : Context){
                 characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,4).toString()
         )
         if(flexFlag){
-            processGesture()
+            process?.let { it(fingers,newVector) }
             flexFlag = false
             mcuFlag  = false
         }else{

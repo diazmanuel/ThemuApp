@@ -56,7 +56,8 @@
     <string name="hint_text_effect_type">Effect Type</string>
     <string name="txt_led">Feedback Led</string>
     <string name="txt_0">0</string>
-
+    <string name="hint_Name_Session">SESSION NAME</string>
+    <string name="hint_text_profile">PROFILE</string>
 
 
 </resources>
