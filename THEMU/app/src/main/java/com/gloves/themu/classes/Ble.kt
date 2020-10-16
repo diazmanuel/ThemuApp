@@ -6,15 +6,14 @@ import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
-import android.net.wifi.aware.Characteristics
 import android.os.Handler
 import android.os.ParcelUuid
 import android.util.Log
 import java.nio.ByteBuffer
-
 import java.util.*
 
-class Ble (val context : Context){
+
+class Ble(val context: Context){
 
     val adapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     private var deviceName: String? = null
@@ -22,14 +21,17 @@ class Ble (val context : Context){
     private val TAG = "BLE"
     private var bluetoothGatt: BluetoothGatt? = null
     var connected = false
-    var fingers = intArrayOf(0,0,0,0,0)
-    var quaternion = floatArrayOf(0f,0f,0f,0f)
-    var newVector = floatArrayOf(0f,0f,0f)
-    var oldVector = floatArrayOf(0f,0f,0f)
-    var difVector = floatArrayOf(0f,0f,0f)
+    var fingers = intArrayOf(0, 0, 0, 0, 0)
+    var quaternion = floatArrayOf(0f, 0f, 0f, 0f)
+    var newVector = floatArrayOf(0f, 0f, 0f)
+    var oldVector = floatArrayOf(0f, 0f, 0f)
+    var difVector = floatArrayOf(0f, 0f, 0f)
     private var mcuFlag: Boolean = false
     private var flexFlag: Boolean = false
-    private var process : ((IntArray,FloatArray) -> Unit)? = null
+    private var led = 0
+    private var process : ((IntArray, FloatArray) -> Int)? = null
+
+    private val descQueue: Queue<Pair<Int,Boolean>> = LinkedList()
 
     fun start(){
 
@@ -37,43 +39,87 @@ class Ble (val context : Context){
         val filters = mutableListOf<ScanFilter>()
         val settings = ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
 
-        filters.add(ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvFlex))).build())
+        filters.add(
+            ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvFlex))).build()
+        )
         filters.add(ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvMCU))).build())
         filters.add(ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvRst))).build())
-        filters.add(ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvBatery))).build())
+        filters.add(
+            ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvBatery))).build()
+        )
         filters.add(ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvLed))).build())
 
         handler.postDelayed({
             adapter.bluetoothLeScanner.stopScan(scanCallback)
         }, SCAN_PERIOD)
-        adapter.bluetoothLeScanner.startScan(filters,settings,scanCallback)
+        adapter.bluetoothLeScanner.startScan(filters, settings, scanCallback)
         Log.i(TAG, "START SCANNING")
     }
     fun close(){
-        bluetoothGatt?.close()
-        bluetoothGatt = null
+        bluetoothGatt?.let {
+            it.disconnect()
+            it.close()
+            null
+        }
     }
     fun notify(enable: Boolean){
-        Log.i(TAG, "NOTIFICATION: $enable")
-        val characteristic =bluetoothGatt?.getService(expandUuid(uuidSrvFlex))?.getCharacteristic(expandUuid(uuidChrFlex))
-        bluetoothGatt?.setCharacteristicNotification(characteristic, enable)
-        val descriptor = characteristic?.getDescriptor(expandUuid(uuidDscFlex))?.apply {
-            value = if (enable) {
-                BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-            }else{
-                BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
+        descQueue.add(Pair(0,enable))
+        descQueue.add(Pair(1,enable))
+        writeNextDescriptor()
+    }
+    fun writeNextDescriptor(){
+        val characteristic: BluetoothGattCharacteristic?
+        val descriptor : BluetoothGattDescriptor?
+        descQueue.poll()?.let {
+            when (it.first) {
+                0 -> {
+                    characteristic = bluetoothGatt?.getService(expandUuid(uuidSrvFlex))
+                        ?.getCharacteristic(expandUuid(uuidChrFlex))
+                    bluetoothGatt?.setCharacteristicNotification(characteristic, it.second)
+                    descriptor = characteristic?.getDescriptor(expandUuid(uuidDscFlex))?.apply {
+                        value = if (it.second) {
+                            BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                        } else {
+                            BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
+                        }
+                    }
+                    bluetoothGatt?.writeDescriptor(descriptor)
+                    Log.i(TAG, "NOTIFICATION FLEX: ${it.second}")
+                }
+                1 -> {
+                    characteristic = bluetoothGatt?.getService(expandUuid(uuidSrvMCU))
+                        ?.getCharacteristic(expandUuid(uuidChrMCU))
+                    bluetoothGatt?.setCharacteristicNotification(characteristic, it.second)
+                    descriptor = characteristic?.getDescriptor(expandUuid(uuidDscMCU))?.apply {
+                        value = if (it.second) {
+                            BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                        } else {
+                            BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
+                        }
+                    }
+                    bluetoothGatt?.writeDescriptor(descriptor)
+                    Log.i(TAG, "NOTIFICATION MCU: ${it.second}")
+                }
+                else -> {}
             }
         }
-        bluetoothGatt?.writeDescriptor(descriptor)
     }
 
-    fun readCharacteristic(uuidSrv : String,uuidChr :String){
-        val characteristic =bluetoothGatt?.getService(expandUuid(uuidSrv))?.getCharacteristic(expandUuid(uuidChr))
+    fun readCharacteristic(uuidSrv: String, uuidChr: String){
+        val characteristic =bluetoothGatt?.getService(expandUuid(uuidSrv))?.getCharacteristic(
+            expandUuid(
+                uuidChr
+            )
+        )
         bluetoothGatt?.readCharacteristic(characteristic)
     }
 
-    fun writeCharacteristic(uuidSrv : String,uuidChr :String,data :Byte){
-        val characteristic =bluetoothGatt?.getService(expandUuid(uuidSrv))?.getCharacteristic(expandUuid(uuidChr))?.apply {
+    fun writeCharacteristic(uuidSrv: String, uuidChr: String, data: Byte){
+        val characteristic =bluetoothGatt?.getService(expandUuid(uuidSrv))?.getCharacteristic(
+            expandUuid(
+                uuidChr
+            )
+        )?.apply {
             value = byteArrayOf(data)
         }
         bluetoothGatt?.writeCharacteristic(characteristic)
@@ -87,7 +133,6 @@ class Ble (val context : Context){
             }
         }
     }
-
     private fun deviceFound(device: BluetoothDevice?) {
        if (bluetoothGatt == null) {
            Log.i(TAG, "DEVICE FOUND")
@@ -113,19 +158,16 @@ class Ble (val context : Context){
         }
 
         override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
-            //val characteristic = gatt?.getService(expandUuid(uuidSrvLed))
-            //    ?.getCharacteristic(expandUuid(uuidChrLed))
-            //characteristic?.value = byteArrayOf(50)
-            //gatt?.writeCharacteristic(characteristic)
-            //gatt?.setCharacteristicNotification(characteristic,true)
-            //gatt?.readCharacteristic(characteristic)
-            //characteristic = gatt?.getService(UUID.fromString(getString(R.string.uuid_serv_MCU)))
-            //?.getCharacteristic(UUID.fromString(getString(R.string.uuid_chr_MCU)))
-            //gatt?.setCharacteristicNotification(characteristic,true)
-            //writeCharacteristic(uuidSrvLed,uuidChrLed,50)
-            //readCharacteristic("0100","0110")
+            super.onServicesDiscovered(gatt, status)
         }
 
+        override fun onDescriptorWrite(
+            gatt: BluetoothGatt?,
+            descriptor: BluetoothGattDescriptor?,
+            status: Int
+        ) {
+            writeNextDescriptor()
+        }
         override fun onCharacteristicWrite(
             gatt: BluetoothGatt?,
             characteristic: BluetoothGattCharacteristic?,
@@ -138,7 +180,10 @@ class Ble (val context : Context){
             characteristic: BluetoothGattCharacteristic?,
             status: Int
         ) {
-            Log.i(TAG, characteristic?.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16,0).toString())
+            Log.i(
+                TAG,
+                characteristic?.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0).toString()
+            )
         }
         override fun onCharacteristicChanged(
             gatt: BluetoothGatt?,
@@ -152,9 +197,40 @@ class Ble (val context : Context){
     }
 
     private fun setMCU(characteristic: BluetoothGattCharacteristic) {
-
         for(i in 0..3){
-            quaternion[i]=characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT,i*4)
+            quaternion[i] =ByteBuffer.wrap(byteArrayOf(characteristic.value[3+(i*4)], characteristic.value[2+(i*4)], characteristic.value[1+(i*4)], characteristic.value[0+(i*4)])).getFloat(0)
+        }
+
+
+        Log.i(
+            TAG, "current MCU data: " +
+                    quaternion[0].toString()+ " - " +
+                    quaternion[1].toString()+ " - " +
+                    quaternion[2].toString()+ " - " +
+                    quaternion[3].toString()
+        )
+        newVector=rotateVector(oldVector,quaternion)
+        for (i in 0..2) {
+            difVector[i] = oldVector[i] - newVector[i]
+        }
+        oldVector=newVector
+
+
+        if(flexFlag){
+            process?.let {
+                if(it(fingers,newVector)!=led){
+                    led = it(fingers, newVector)
+                    writeCharacteristic(uuidSrvLed, uuidChrLed, led.toByte())
+                }
+            }
+            flexFlag=false
+            mcuFlag = false
+        }else{
+            mcuFlag = true
+        }
+/*
+        for(i in 0..3){
+            quaternion[0]=characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT,0*4)
         }
         newVector=rotateVector(oldVector,quaternion)
         for (i in 0..2) {
@@ -162,23 +238,33 @@ class Ble (val context : Context){
         }
         oldVector=newVector
 
-        Log.i(TAG, "current MCU data: "+
-                characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT,0).toString()+" - "+
-                characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT,4).toString()+" - "+
-                characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT,8).toString()+" - "+
-                characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT,12).toString()
+        Log.i(
+            TAG, "current MCU data: " +
+                    characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 0)
+                        .toString() + " - " +
+                    characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 4)
+                        .toString() + " - " +
+                    characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 8)
+                        .toString() + " - " +
+                    characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 12)
+                        .toString()
         )
 
         if(flexFlag){
-            process?.let { it(fingers,newVector) }
+            process?.let {
+                led = it(fingers,newVector)
+                writeCharacteristic(Ble.uuidSrvLed,Ble.uuidChrLed,led.toByte())
+            }
             flexFlag=false
             mcuFlag = false
         }else{
             mcuFlag = true
         }
 
+
+ */
     }
-    fun openSession(myProcess: (IntArray,FloatArray) -> Unit){
+    fun openSession(myProcess: (IntArray, FloatArray) -> Int){
         // invoke regular function using local name
         process = myProcess
     }
@@ -187,23 +273,33 @@ class Ble (val context : Context){
     }
 
     private fun setFlex(characteristic: BluetoothGattCharacteristic) {
-        //fingers[0] = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,0)
 
         for (i in 0..4){
-            fingers[i] = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,i)
+            fingers[i] = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, i)
         }
 
 
 
-        Log.i(TAG, "current flex data: "+
-                characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,0).toString()+" - "+
-                characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,1).toString()+" - "+
-                characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,2).toString()+" - "+
-                characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,3).toString()+" - "+
-                characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8,4).toString()
+        Log.i(
+            TAG, "current flex data: " +
+                    characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0)
+                        .toString() + " - " +
+                    characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 1)
+                        .toString() + " - " +
+                    characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 2)
+                        .toString() + " - " +
+                    characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 3)
+                        .toString() + " - " +
+                    characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 4)
+                        .toString()
         )
         if(flexFlag){
-            process?.let { it(fingers,newVector) }
+            process?.let {
+                if(it(fingers,newVector)!=led){
+                    led = it(fingers, newVector)
+                    writeCharacteristic(uuidSrvLed, uuidChrLed, led.toByte())
+                }
+            }
             flexFlag = false
             mcuFlag  = false
         }else{
@@ -216,9 +312,9 @@ class Ble (val context : Context){
     private fun expandUuid(shortCode16: String): UUID {
         return UUID.fromString("0000$shortCode16-${Companion.uuidBase}")
     }
-    private fun rotateVector(vector:FloatArray, hamiltonForm:FloatArray): FloatArray
+    private fun rotateVector(vector: FloatArray, hamiltonForm: FloatArray): FloatArray
     {
-        val rotated = floatArrayOf(0f,0f,0f)
+        val rotated = floatArrayOf(0f, 0f, 0f)
         val r11 :Float = hamiltonForm[0]*hamiltonForm[0]+hamiltonForm[1]*hamiltonForm[1]-hamiltonForm[2]*hamiltonForm[2]-hamiltonForm[3]*hamiltonForm[3]
         val r12 :Float = 2*(hamiltonForm[1]*hamiltonForm[2]-hamiltonForm[3]*hamiltonForm[0]);
         val r13 :Float = 2*(hamiltonForm[1]*hamiltonForm[3]+hamiltonForm[2]*hamiltonForm[0]);
@@ -246,6 +342,7 @@ class Ble (val context : Context){
         const val uuidChrLed = "0410"
         const val uuidChrBatery = "2A19"
         const val uuidDscFlex = "2902"
+        const val uuidDscMCU = "2902"
         const val uuidDscRst = "0211"
         const val uuidDscLed = "0411"
         const val uuidDscBatery1 = "2901"

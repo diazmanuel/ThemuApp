@@ -110,75 +110,46 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/LedLabel"
+        android:id="@+id/txtLed"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_height="30dp"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
         android:gravity="start"
         android:text="@string/txt_led"
         android:textColor="@color/txt"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/button"
+
+
+        app:layout_constraintEnd_toStartOf="@+id/btnLed"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/feedbackLed"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
 
-        android:gravity="end"
-        android:inputType="number"
-        android:text="@string/txt_0"
-        android:textColor="@color/txt"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/button2"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/button"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnLed"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="30dp"
         android:gravity="center"
-        android:layout_marginStart="60dp"
-        android:text="-"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/feedbackLed"
-
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/LedLabel"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:text="+"
-        android:textSize="20sp"
+        android:background="@color/txt"
         app:layout_constraintEnd_toEndOf="parent"
-
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/feedbackLed"
+        app:layout_constraintStart_toEndOf="@+id/txtLed"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
     <Button
         android:id="@+id/btnProfileAddLink"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ADD LINK"
         android:layout_marginTop="30dp"
+        android:text="ADD LINK"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/LedLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/txtLed" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

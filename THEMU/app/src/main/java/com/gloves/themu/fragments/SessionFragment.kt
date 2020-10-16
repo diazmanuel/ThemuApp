@@ -3,6 +3,7 @@ package com.gloves.themu.fragments
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,8 @@ import kotlinx.android.synthetic.main.fragment_session.*
 class SessionFragment : Fragment() {
 
     private var id:Int? = null
+    private val TAG = "BLE"
+    private val range = 20
     private var isAudioEnabled: Boolean = false
     private var db: ConexionSQLiteHelper? = null
     private lateinit var profile : Profile
@@ -32,10 +35,6 @@ class SessionFragment : Fragment() {
             id = it.getInt(R.string.key_id.toString())
         }
         db= ConexionSQLiteHelper(requireContext())
-        profile = db?.readProfiles()?.find { it.profilePK == id  }!!
-
-
-        (activity as MainActivity).myBle.openSession(::process)
     }
 
     override fun onCreateView(
@@ -48,6 +47,10 @@ class SessionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        loadProfile()
+
         btnSession.setOnClickListener {
             //findNavController().popBackStack()
             isAudioEnabled = !isAudioEnabled
@@ -76,7 +79,38 @@ class SessionFragment : Fragment() {
         (activity as MainActivity).myBle.closeSession()
 
     }
-    fun process(fingers :IntArray,vector : FloatArray){
+    fun process(fingers :IntArray,vector : FloatArray): Int{
+        var led = 0
+        for((index,link) in profile.links.withIndex()){
+            link.effect.enable =
+                                fingers[0] < link.gesture.littleFinger + range/2 &&
+                                fingers[0] > link.gesture.littleFinger - range/2 &&
+                                fingers[1] < link.gesture.ringFinger + range/2  &&
+                                fingers[1] > link.gesture.ringFinger - range/2  &&
+                                fingers[2] < link.gesture.middleFinger + range/2  &&
+                                fingers[2] > link.gesture.middleFinger - range/2 &&
+                                fingers[3] < link.gesture.indexFinger + range/2  &&
+                                fingers[3] > link.gesture.indexFinger - range/2 &&
+                                fingers[4] < link.gesture.thumbFinger + range/2  &&
+                                fingers[4] > link.gesture.thumbFinger - range/2
+
+            //NativeInterface.enableEffectAt(link.effect.enable,index)
+            if (link.effect.enable){
+                led = link.led
+                Log.i(TAG, "Effect "+ link.effect.usersName + ": ENABLE")
+            }
+        }
+        return led
+    }
+    fun loadProfile(){
+        profile = db?.readProfiles()?.find { it.profilePK == id  }!!
+        for ((index,link) in profile.links.withIndex()){
+            NativeInterface.addEffect(link.effect)
+            NativeInterface.enableEffectAt(link.effect.enable,index)
+        }
+        isAudioEnabled = true
+        NativeInterface.enable(isAudioEnabled)
+        (activity as MainActivity).myBle.openSession(::process)
 
     }
 }

@@ -26,7 +26,7 @@ data class Effect(val effectDescription: EffectDescription) {
     val paramValues = FloatArray(effectDescription.paramValues.size) {
         i -> effectDescription.paramValues[i].defaultValue
     }
-    var enable: Boolean = true
+    var enable: Boolean = false
     var usersName: String? = null
     var effectPK: Int? = null
 }

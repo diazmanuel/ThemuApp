@@ -6,13 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.navigation.fragment.findNavController
 import com.gloves.themu.R
+import com.gloves.themu.R.array.feedback
 import com.gloves.themu.classes.Effect
 import com.gloves.themu.classes.Gesture
 import com.gloves.themu.classes.Link
 import com.gloves.themu.classes.Profile
 import com.gloves.themu.databases.ConexionSQLiteHelper
+import kotlinx.android.synthetic.main.fragment_gesture.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class ProfileFragment : Fragment() {
@@ -43,8 +47,14 @@ class ProfileFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        var feedbackLed= 0
         if (!id.toBoolean()) {
             btnProfileSave.text= getString(R.string.btn_create)
+        }
+        btnLed.setOnClickListener {
+            feedbackLed++
+            feedbackLed = feedbackLed.rem(8)
+            btnLed.background = resources.getIntArray(feedback)[feedbackLed].toDrawable()
         }
         menuProfileEffect.setAdapter(ArrayAdapter(requireContext(),R.layout.dropdown_menu_popup_item,effects.map { it.usersName }))
         menuProfileEffect.inputType = 0
@@ -54,9 +64,11 @@ class ProfileFragment : Fragment() {
         menuProfileGesture.setOnItemClickListener { parent, view, position, id -> auxGesture= gestures[position] }
         btnProfileAddLink.setOnClickListener {
             if(auxEffect != null && auxGesture != null){
-                links.add(Link(auxGesture!!, auxEffect!!,0,0))
+                links.add(Link(auxGesture!!, auxEffect!!, feedbackLed,0))
                 auxEffect= null
                 auxGesture= null
+                feedbackLed = 0
+                btnLed.background = resources.getIntArray(feedback)[feedbackLed].toDrawable()
                 menuProfileGesture.text.clear()
                 menuProfileGesture.clearFocus()
                 menuProfileEffect.text.clear()
@@ -68,7 +80,8 @@ class ProfileFragment : Fragment() {
                 db?.insertProfile(
                     Profile(
                         links,
-                        txtProfileName.text.toString(),
+                        if (txtProfileName.text.isEmpty()) "Default" else txtProfileName.text.toString()
+                    ,
                         0
                     )
                 )

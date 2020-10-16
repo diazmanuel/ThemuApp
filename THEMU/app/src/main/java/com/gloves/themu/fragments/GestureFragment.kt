@@ -36,11 +36,11 @@ class GestureFragment : Fragment() {
 
     private fun updateValue(){
 
-        skBarPulgar.progress  = (activity as MainActivity).myBle.fingers[0]
-        skBarIndice.progress  = (activity as MainActivity).myBle.fingers[1]
+        skBarPulgar.progress  = (activity as MainActivity).myBle.fingers[4]
+        skBarIndice.progress  = (activity as MainActivity).myBle.fingers[3]
         skBarMedio.progress   = (activity as MainActivity).myBle.fingers[2]
-        skBarAnular.progress  = (activity as MainActivity).myBle.fingers[3]
-        skBarMenique.progress = (activity as MainActivity).myBle.fingers[4]
+        skBarAnular.progress  = (activity as MainActivity).myBle.fingers[1]
+        skBarMenique.progress = (activity as MainActivity).myBle.fingers[0]
 
         axisX.text = (activity as MainActivity).myBle.newVector[0].toString()
         axisY.text = (activity as MainActivity).myBle.newVector[1].toString()

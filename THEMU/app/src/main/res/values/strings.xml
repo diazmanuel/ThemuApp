@@ -47,9 +47,9 @@
     <string name="txt_pulgar" >Thumb Finger</string>
     <string name="txt_axis_default" >0.00</string>
     <string name="hint_Name_Gesture">GESTURE NAME</string>
-    <string name="hint_emptyGesture">No gestures have been created</string>
-    <string name="hint_emptyEffect">No effects have been created</string>
-    <string name="hint_emptyProfile">No Profiles have been created</string>
+    <string name="hint_emptyGesture">No hay gestos PA</string>
+    <string name="hint_emptyEffect">No hay effectos PA</string>
+    <string name="hint_emptyProfile">No hay perfiles PA</string>
     <string name="txt_null">null</string>
     <string name="hint_Name_Profile">Profile Name</string>
     <string name="hint_text_gesture">Gesture</string>

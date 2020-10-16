@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import androidx.core.database.getIntOrNull
 import com.gloves.themu.classes.*
 
@@ -181,12 +182,10 @@ class ConexionSQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE
 
     fun readProfiles(): List<Profile>{
         val profiles = mutableListOf<Profile>()
-        val links = mutableListOf<Link>()
-        var gestures = emptyList<Gesture>()
-        var effects = emptyList<Effect>()
 
-        gestures = readGestures()
-        effects = readEffects()
+        val gestures = readGestures()
+        val effects = readEffects()
+
         //SELECT PROFILES.*,LINKS.* FROM LINKS JOIN PROFILES ON LINKS.PROFILE_FK = PROFILES.PROFILE_PK ORDER BY LINKS.LINKS_PK ASC
         val cursor = db.rawQuery(
             "SELECT "+
@@ -211,10 +210,17 @@ class ConexionSQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE
                     " ASC"
         ,null)
         if(cursor.moveToFirst()){
-            var auxProfilePK = cursor.getInt(0)
             do{
-
-                links.add(
+                if( profiles.isEmpty() || profiles.last().profilePK!=cursor.getInt(0) ){
+                    profiles.add(
+                        Profile(
+                            mutableListOf(),
+                            cursor.getString(1),
+                            cursor.getInt(0)
+                        )
+                    )
+                }
+                profiles.last().links.add(
                     Link(
                         gestures.find { it.gesturePK == cursor.getInt(4) }!!,
                         effects.find { it.effectPK == cursor.getInt(5)}!!,
@@ -222,17 +228,6 @@ class ConexionSQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE
                         cursor.getInt(2)
                     )
                 )
-                if(auxProfilePK != cursor.getInt(0)){
-                    profiles.add(
-                        Profile(
-                            links,
-                            cursor.getString(1),
-                            auxProfilePK
-                        )
-                    )
-                    links.clear()
-                    auxProfilePK = cursor.getInt(0)
-                }
             }while (cursor.moveToNext())
         }
         cursor.close()

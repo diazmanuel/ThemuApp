@@ -18,4 +18,16 @@
 
 
 
+    <array name="feedback">
+        <item>#000000</item>
+        <item>#0000FF</item>
+        <item>#00FF00</item>
+        <item>#00FFFF</item>
+        <item>#FF0000</item>
+        <item>#FF00FF</item>
+        <item>#FFFF00</item>
+        <item>#FFFFFF</item>
+    </array>
+
+
 </resources>
