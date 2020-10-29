@@ -23,6 +23,7 @@ class Ble(val context: Context){
     var connected = false
     var fingers = intArrayOf(0, 0, 0, 0, 0)
     var quaternion = floatArrayOf(0f, 0f, 0f, 0f)
+    var refVector = floatArrayOf(1f, 0f, 0f)
     var newVector = floatArrayOf(0f, 0f, 0f)
     var oldVector = floatArrayOf(0f, 0f, 0f)
     var difVector = floatArrayOf(0f, 0f, 0f)
@@ -209,7 +210,8 @@ class Ble(val context: Context){
                     quaternion[2].toString()+ " - " +
                     quaternion[3].toString()
         )
-        newVector=rotateVector(oldVector,quaternion)
+
+        newVector=rotateVector(refVector,quaternion)
         for (i in 0..2) {
             difVector[i] = oldVector[i] - newVector[i]
         }

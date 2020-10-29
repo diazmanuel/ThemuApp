@@ -78,7 +78,6 @@ class MainActivity : AppCompatActivity() {
         }
         myBle.adapter.takeIf { !it.isEnabled }?.apply {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
         }
         myBle.start()
