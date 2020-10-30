@@ -140,6 +140,13 @@ class Ble(val context: Context){
            bluetoothGatt=device?.connectGatt(context, false, gattCallback)
        }
     }
+    fun isConnected(): Boolean{
+        return connected
+    }
+    fun isNotConnected() :Boolean{
+        return !connected
+    }
+
     private val gattCallback = object  : BluetoothGattCallback(){
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
 

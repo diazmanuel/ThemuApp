@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.navigation.fragment.findNavController
 import com.gloves.themu.R
+import com.gloves.themu.activitys.MainActivity
+import com.gloves.themu.classes.Ble
 import com.gloves.themu.classes.Gesture
 import com.gloves.themu.classes.Profile
 import com.gloves.themu.databases.ConexionSQLiteHelper
@@ -35,7 +37,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val data = Bundle()
-
         findNavController().graph.startDestination = R.id.homeFragment
         menuHome.setAdapter(ArrayAdapter(requireContext(),R.layout.dropdown_menu_popup_item,profiles.map { it.usersName }))
         menuHome.inputType=0

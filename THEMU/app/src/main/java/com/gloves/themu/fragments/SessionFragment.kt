@@ -48,7 +48,7 @@ class SessionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        (activity as MainActivity).myBle.notify(true)
         loadProfile()
 
         btnSession.setOnClickListener {
@@ -75,6 +75,7 @@ class SessionFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        (activity as MainActivity).myBle.notify(false)
         NativeInterface.destroyAudioEngine()
         (activity as MainActivity).myBle.closeSession()
 

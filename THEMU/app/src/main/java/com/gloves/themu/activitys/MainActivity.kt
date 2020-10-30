@@ -36,12 +36,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController:NavController
     private lateinit var appBarConfiguration:AppBarConfiguration
 
-    private val MY_PERMISSIONS_RECORD_AUDIO = 17
-    private val SCAN_PERIOD: Long = 10000
-    private val MY_PERMISSIONS_ACCESS_FINE_LOCATION = 21
-    val REQUEST_ENABLE_BT = 22
+
     var myBle = Ble(this)
-    val handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,64 +53,11 @@ class MainActivity : AppCompatActivity() {
         setVisibility()
 
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.RECORD_AUDIO),
-                MY_PERMISSIONS_RECORD_AUDIO
-            )
-        }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                MY_PERMISSIONS_ACCESS_FINE_LOCATION
-            )
-        }
-        myBle.adapter.takeIf { !it.isEnabled }?.apply {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-        }
-        myBle.start()
-        handler.postDelayed({
-            myBle.notify(true)
-            myBle.writeCharacteristic(Ble.uuidSrvLed,Ble.uuidChrLed,0)
-        }, SCAN_PERIOD)
-
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
         myBle.close()
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            MY_PERMISSIONS_RECORD_AUDIO -> {
-                if ((grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED)) {
-                    val builder = AlertDialog.Builder(this).apply {
-                        setMessage(
-                            "Themu require audio input and bluetooth permissions \n" +
-                                    "Enable permissions and restart app to use."
-                        )
-                        setTitle("Permission Error")
-                    }
-                    builder.create().show()
-                }
-                return
-            }
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
