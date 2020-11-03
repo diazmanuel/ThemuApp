@@ -3,6 +3,7 @@ package com.gloves.themu.fragments
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -26,6 +27,7 @@ class SessionFragment : Fragment() {
     private val range = 20
     private var isAudioEnabled: Boolean = false
     private var db: ConexionSQLiteHelper? = null
+
     private lateinit var profile : Profile
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +36,8 @@ class SessionFragment : Fragment() {
         arguments?.let {
             id = it.getInt(R.string.key_id.toString())
         }
+        setHasOptionsMenu(true)
+
         db= ConexionSQLiteHelper(requireContext())
     }
 
@@ -48,29 +52,28 @@ class SessionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as MainActivity).myBle.notify(true)
-        loadProfile()
 
-        btnSession.setOnClickListener {
-            //findNavController().popBackStack()
-            isAudioEnabled = !isAudioEnabled
-            NativeInterface.enable(isAudioEnabled)
-            if (isAudioEnabled){
-                btnSession.text = "STOP"
-            }else{
-                btnSession.text = "START"
+        (activity as MainActivity).myBle.notify(true)
+        Handler().postDelayed({
+
+            loadProfile()
+            btnSession.setOnClickListener {
+                //findNavController().popBackStack()
+                isAudioEnabled = !isAudioEnabled
+                NativeInterface.enable(isAudioEnabled)
+                if (isAudioEnabled){
+                    btnSession.text = "STOP"
+                }else{
+                    btnSession.text = "START"
+                }
             }
-        }
+        }, 500)
     }
 
     override fun onResume() {
         super.onResume()
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
-            == PackageManager.PERMISSION_GRANTED
-        ) {
             NativeInterface.createAudioEngine()
             NativeInterface.enable(isAudioEnabled)
-        }
     }
 
     override fun onDestroy() {
@@ -78,11 +81,13 @@ class SessionFragment : Fragment() {
         (activity as MainActivity).myBle.notify(false)
         NativeInterface.destroyAudioEngine()
         (activity as MainActivity).myBle.closeSession()
-
     }
-    fun process(fingers :IntArray,vector : FloatArray): Int{
+
+    private fun process(fingers :IntArray, vector : FloatArray): Int{
         var led = 0
+        var enable: Boolean
         for((index,link) in profile.links.withIndex()){
+            enable = link.effect.enable
             link.effect.enable =
                                 fingers[0] < link.gesture.littleFinger + range/2 &&
                                 fingers[0] > link.gesture.littleFinger - range/2 &&
@@ -94,24 +99,19 @@ class SessionFragment : Fragment() {
                                 fingers[3] > link.gesture.indexFinger - range/2 &&
                                 fingers[4] < link.gesture.thumbFinger + range/2  &&
                                 fingers[4] > link.gesture.thumbFinger - range/2
-
-            //NativeInterface.enableEffectAt(link.effect.enable,index)
-            if (link.effect.enable){
-                led = link.led
-                Log.i(TAG, "Effect "+ link.effect.usersName + ": ENABLE")
-            }
+            if(enable != link.effect.enable) NativeInterface.enableEffectAt(link.effect.enable,index)
+            if (link.effect.enable) led = link.led
         }
         return led
     }
-    fun loadProfile(){
+    private fun loadProfile(){
+
         profile = db?.readProfiles()?.find { it.profilePK == id  }!!
         for ((index,link) in profile.links.withIndex()){
             NativeInterface.addEffect(link.effect)
             NativeInterface.enableEffectAt(link.effect.enable,index)
+            NativeInterface.updateParamsAt(link.effect,index)
         }
-        isAudioEnabled = true
-        NativeInterface.enable(isAudioEnabled)
         (activity as MainActivity).myBle.openSession(::process)
-
     }
 }

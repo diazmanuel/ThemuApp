@@ -45,6 +45,7 @@ class SplashFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         for (permission in PERMISSIONS){
             if (ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED){
                 reqPermission.add(permission)
@@ -63,6 +64,8 @@ class SplashFragment : Fragment() {
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
             }
         }
+
+
     }
 
     override fun onRequestPermissionsResult(
@@ -136,7 +139,6 @@ class SplashFragment : Fragment() {
                     setCancelable(false)
                 }.create().show()
             }
-
         }, 1000)
     }
     private fun restartApp(){

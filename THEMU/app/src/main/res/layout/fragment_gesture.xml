@@ -211,10 +211,11 @@
         android:textColor="@color/txt2"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/axisZ"
+        app:layout_constraintEnd_toStartOf="@+id/axisY"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/axisY"
-        app:layout_constraintTop_toBottomOf="@+id/txtX" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtX"
+ />
 
     <TextView
         android:id="@+id/axisY"
@@ -226,9 +227,9 @@
         android:textColor="@color/txt2"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/axisX"
+        app:layout_constraintEnd_toStartOf="@+id/axisZ"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/axisX"
         app:layout_constraintTop_toBottomOf="@+id/txtX" />
 
     <TextView
@@ -243,7 +244,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/axisX"
+        app:layout_constraintStart_toEndOf="@+id/axisY"
         app:layout_constraintTop_toBottomOf="@+id/txtX" />
 
     <Button

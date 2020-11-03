@@ -116,17 +116,21 @@ class EffectFragment : Fragment() {
                         override fun onProgressChanged(
                             seekBarView: SeekBar?, progress: Int, fromUser: Boolean
                         ) {
+
                             val fracprogress = ((seekBarView!!.progress / 100f) * (param.maxValue - param.minValue) + param.minValue)
                             curLabelView.text = floatFormat.format(fracprogress)
 
                             timer?.cancel()
                             timer = Timer()
                             timer?.schedule(timerTask { updateEffectParam(fracprogress) }, 100)
-                        }
 
+
+                        }
                         fun updateEffectParam(fracprogress : Float){
                             effect!!.paramValues[counter] = fracprogress
+                            NativeInterface.enableEffectAt(false,0)
                             NativeInterface.updateParamsAt(effect!!, 0)
+                            NativeInterface.enableEffectAt(true,0)
                         }
                     })
 
@@ -136,12 +140,8 @@ class EffectFragment : Fragment() {
     }
     override fun onResume() {
         super.onResume()
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
-            == PackageManager.PERMISSION_GRANTED
-        ) {
             NativeInterface.createAudioEngine()
             NativeInterface.enable(isAudioEnabled)
-        }
     }
 
     override fun onPause() {

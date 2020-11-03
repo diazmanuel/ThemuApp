@@ -103,6 +103,6 @@ object NativeInterface {
     private external fun enablePassthroughNative(enable: Boolean)
 
     // These are utility functions
-    private fun convertEffectToId(effect: Effect): Int =
+    fun convertEffectToId(effect: Effect): Int =
         effectDescriptionMap[effect.name]?.id ?: -1
 }

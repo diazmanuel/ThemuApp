@@ -95,13 +95,10 @@ class GestureFragment : Fragment() {
         })
     }
 
-    override fun onPause() {
-        super.onPause()
-        loop.removeMessages(0)
-    }
 
     override fun onDestroy() {
         super.onDestroy()
+        loop.removeMessages(0)
         (activity as MainActivity).myBle.notify(false)
 
     }
