@@ -58,7 +58,7 @@ class GestureFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as MainActivity).myBle.notify(true)
+        //(activity as MainActivity).myBle.notify(true)
 
         if (!id.toBoolean()) {
             btnGestureSave.text= getString(R.string.btn_create)
@@ -99,7 +99,7 @@ class GestureFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         loop.removeMessages(0)
-        (activity as MainActivity).myBle.notify(false)
+        //(activity as MainActivity).myBle.notify(false)
 
     }
 

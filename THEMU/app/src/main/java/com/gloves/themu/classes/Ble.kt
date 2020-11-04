@@ -19,6 +19,8 @@ class Ble(val context: Context){
     private var deviceName: String? = null
     private val SCAN_PERIOD: Long = 10000
     private val TAG = "BLE"
+    private val TAG2 = "NOTIFY"
+
     private var bluetoothGatt: BluetoothGatt? = null
     var connected = false
     var fingers = intArrayOf(0, 0, 0, 0, 0)
@@ -58,6 +60,7 @@ class Ble(val context: Context){
     }
     fun close(){
         bluetoothGatt?.let {
+            Log.i(TAG, "DISCONNECT")
             it.disconnect()
             it.close()
             null
@@ -211,7 +214,7 @@ class Ble(val context: Context){
 
 
         Log.i(
-            TAG, "current MCU data: " +
+            TAG2, "current MCU data: " +
                     quaternion[0].toString()+ " - " +
                     quaternion[1].toString()+ " - " +
                     quaternion[2].toString()+ " - " +
@@ -237,41 +240,7 @@ class Ble(val context: Context){
         }else{
             mcuFlag = true
         }
-/*
-        for(i in 0..3){
-            quaternion[0]=characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT,0*4)
-        }
-        newVector=rotateVector(oldVector,quaternion)
-        for (i in 0..2) {
-            difVector[i] = oldVector[i] - newVector[i]
-        }
-        oldVector=newVector
 
-        Log.i(
-            TAG, "current MCU data: " +
-                    characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 0)
-                        .toString() + " - " +
-                    characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 4)
-                        .toString() + " - " +
-                    characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 8)
-                        .toString() + " - " +
-                    characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 12)
-                        .toString()
-        )
-
-        if(flexFlag){
-            process?.let {
-                led = it(fingers,newVector)
-                writeCharacteristic(Ble.uuidSrvLed,Ble.uuidChrLed,led.toByte())
-            }
-            flexFlag=false
-            mcuFlag = false
-        }else{
-            mcuFlag = true
-        }
-
-
- */
     }
     fun openSession(myProcess: (IntArray, FloatArray) -> Int){
         // invoke regular function using local name
@@ -290,7 +259,7 @@ class Ble(val context: Context){
 
 
         Log.i(
-            TAG, "current flex data: " +
+            TAG2, "current flex data: " +
                     characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0)
                         .toString() + " - " +
                     characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 1)

@@ -23,8 +23,6 @@ import kotlinx.android.synthetic.main.fragment_session.*
 class SessionFragment : Fragment() {
 
     private var id:Int? = null
-    private val TAG = "BLE"
-    private val range = 20
     private var isAudioEnabled: Boolean = false
     private var db: ConexionSQLiteHelper? = null
 
@@ -52,8 +50,7 @@ class SessionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        (activity as MainActivity).myBle.notify(true)
+        //(activity as MainActivity).myBle.notify(true)
         Handler().postDelayed({
 
             loadProfile()
@@ -78,27 +75,38 @@ class SessionFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        (activity as MainActivity).myBle.notify(false)
+        //(activity as MainActivity).myBle.notify(false)
         NativeInterface.destroyAudioEngine()
         (activity as MainActivity).myBle.closeSession()
     }
 
     private fun process(fingers :IntArray, vector : FloatArray): Int{
         var led = 0
+        val rangeFlex = 20
+        val rangeAxis = 1f
         var enable: Boolean
+
         for((index,link) in profile.links.withIndex()){
             enable = link.effect.enable
+            //Log.i("BLE",(vector[0]+rangeAxis).toString() + " | "+ (vector[1]+rangeAxis/2).toString() + " | "+(vector[2]-rangeAxis/2).toString())
             link.effect.enable =
-                                fingers[0] < link.gesture.littleFinger + range/2 &&
-                                fingers[0] > link.gesture.littleFinger - range/2 &&
-                                fingers[1] < link.gesture.ringFinger + range/2  &&
-                                fingers[1] > link.gesture.ringFinger - range/2  &&
-                                fingers[2] < link.gesture.middleFinger + range/2  &&
-                                fingers[2] > link.gesture.middleFinger - range/2 &&
-                                fingers[3] < link.gesture.indexFinger + range/2  &&
-                                fingers[3] > link.gesture.indexFinger - range/2 &&
-                                fingers[4] < link.gesture.thumbFinger + range/2  &&
-                                fingers[4] > link.gesture.thumbFinger - range/2
+                                fingers[0] < link.gesture.littleFinger + rangeFlex/2 &&
+                                fingers[0] > link.gesture.littleFinger - rangeFlex/2 &&
+                                fingers[1] < link.gesture.ringFinger + rangeFlex/2  &&
+                                fingers[1] > link.gesture.ringFinger - rangeFlex/2  &&
+                                fingers[2] < link.gesture.middleFinger + rangeFlex/2  &&
+                                fingers[2] > link.gesture.middleFinger - rangeFlex/2 &&
+                                fingers[3] < link.gesture.indexFinger + rangeFlex/2  &&
+                                fingers[3] > link.gesture.indexFinger - rangeFlex/2 &&
+                                fingers[4] < link.gesture.thumbFinger + rangeFlex/2  &&
+                                fingers[4] > link.gesture.thumbFinger - rangeFlex/2 &&
+                                vector[0]  < link.gesture.xAxis + rangeAxis/2 &&
+                                vector[0]  > link.gesture.xAxis - rangeAxis/2 &&
+                                vector[1]  < link.gesture.yAxis + rangeAxis/2 &&
+                                vector[1]  > link.gesture.yAxis - rangeAxis/2 &&
+                                vector[2]  < link.gesture.zAxis + rangeAxis/2 &&
+                                vector[2]  > link.gesture.zAxis - rangeAxis/2
+
             if(enable != link.effect.enable) NativeInterface.enableEffectAt(link.effect.enable,index)
             if (link.effect.enable) led = link.led
         }

@@ -4,12 +4,15 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,10 +34,6 @@ class SplashFragment : Fragment() {
     )
     val reqPermission = mutableListOf<String>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -122,24 +121,37 @@ class SplashFragment : Fragment() {
         }
     }
     private fun startBle(){
+        val loop = Handler(Looper.getMainLooper())
+        var attempts = 10
+        val timeStep: Long = 1000
+
         (activity as MainActivity).myBle.start()
-        Handler().postDelayed({
-            if ((activity as MainActivity).myBle.isConnected()) {
-                findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
-            } else {
-                AlertDialog.Builder(requireContext()).apply {
-                    setMessage(
-                        "No se logro conectar con Themu glove\n" +
-                                "Reinicie la aplicacion e intentelo denuevo"
-                    )
-                    setTitle("Error de Conexion")
-                    setPositiveButton("RESTART"){_,_ ->
-                        restartApp()
+
+
+        loop.post(object : Runnable {
+            override fun run() {
+                if(attempts==0){
+                    AlertDialog.Builder(requireContext()).apply {
+                        setMessage(
+                            "No se logro conectar con Themu glove\n" +
+                                    "Reinicie la aplicacion e intentelo denuevo"
+                        )
+                        setTitle("Error de Conexion")
+                        setPositiveButton("RESTART"){_,_ ->
+                            restartApp()
+                        }
+                        setCancelable(false)
+                    }.create().show()
+                }else{
+                    if ((activity as MainActivity).myBle.isConnected()) {
+                        findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
+                    }else {
+                        loop.postDelayed(this, timeStep)
                     }
-                    setCancelable(false)
-                }.create().show()
+                    attempts = attempts.dec()
+                }
             }
-        }, 1000)
+        })
     }
     private fun restartApp(){
         val activity = requireActivity()

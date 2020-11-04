@@ -12,9 +12,11 @@ import com.gloves.themu.R
 import com.gloves.themu.activitys.MainActivity
 import com.gloves.themu.classes.Ble
 import com.gloves.themu.classes.Gesture
+import com.gloves.themu.classes.NativeInterface
 import com.gloves.themu.classes.Profile
 import com.gloves.themu.databases.ConexionSQLiteHelper
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_session.*
 
 class HomeFragment : Fragment() {
     private var db: ConexionSQLiteHelper? = null
@@ -48,5 +50,10 @@ class HomeFragment : Fragment() {
             }
 
         }
+        Handler().postDelayed({
+            (activity as MainActivity).myBle.notify(true)
+        }, 1000)
+
+
     }
 }
