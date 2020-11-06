@@ -83,7 +83,7 @@ class SessionFragment : Fragment() {
     private fun process(fingers :IntArray, vector : FloatArray): Int{
         var led = 0
         val rangeFlex = 20
-        val rangeAxis = 1f
+        val rangeAxis = 0.5f
         var enable: Boolean
 
         for((index,link) in profile.links.withIndex()){
