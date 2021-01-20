@@ -5,10 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.gloves.themu.R
-import com.gloves.themu.classes.Gesture
 import com.gloves.themu.classes.Profile
 import com.google.android.material.textview.MaterialTextView
-import kotlinx.android.synthetic.main.layout_gesture_list_item.view.*
 import kotlinx.android.synthetic.main.layout_profile_list_item.view.*
 
 class ProfileRecyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>(){

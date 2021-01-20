@@ -58,6 +58,19 @@
     <string name="txt_0">0</string>
     <string name="hint_Name_Session">SESSION NAME</string>
     <string name="hint_text_profile">PROFILE</string>
+    <string name="txt_flex">Sensor Flex</string>
+    <string name="stop">Stop</string>
+    <string name="txt_dynparam">Dynamic Parameters</string>
+    <string name="btn_stopSession">STOP SESSION</string>
 
-
+    <string-array name="gestures">
+        <item>Gesto 0</item>
+        <item>Gesto 1</item>
+        <item>Gesto 2</item>
+        <item>Gesto 3</item>
+        <item>Gesto 4</item>
+        <item>Gesto 5</item>
+        <item>Gesto 6</item>
+        <item>Gesto 7</item>
+    </string-array>
 </resources>

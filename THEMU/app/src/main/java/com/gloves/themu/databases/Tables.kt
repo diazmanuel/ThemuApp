@@ -1,37 +1,6 @@
 package com.gloves.themu.databases
 
 class Tables {
-    abstract class Gestures{
-        companion object {
-            val TABLE_GESTURES = "GESTURES"
-
-            val FIELD_GESTURE_PK = "GESTURE_PK"
-            val FIELD_GESTURE_USERSNAME = "USERSNAME"
-            val FIELD_GESTURE_LITTLE = "LITTLE_FINGER"
-            val FIELD_GESTURE_RING = "RING_FINGER"
-            val FIELD_GESTURE_MIDDLE = "MIDDLE_FINGER"
-            val FIELD_GESTURE_INDEX = "INDEX_FINGER"
-            val FIELD_GESTURE_THUMB = "THUMB_FINGER"
-            val FIELD_GESTURE_XAXIS = "XAXIS"
-            val FIELD_GESTURE_YAXIS = "YAXIS"
-            val FIELD_GESTURE_ZAXIS = "ZAXIS"
-
-
-            val CREATE_TABLE_GESTURES = ("CREATE TABLE " + TABLE_GESTURES + "("
-                    + FIELD_GESTURE_PK + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + FIELD_GESTURE_USERSNAME + " TEXT,"
-                    + FIELD_GESTURE_LITTLE + " INTEGER,"
-                    + FIELD_GESTURE_RING + " INTEGER,"
-                    + FIELD_GESTURE_MIDDLE + " INTEGER,"
-                    + FIELD_GESTURE_INDEX + " INTEGER,"
-                    + FIELD_GESTURE_THUMB + " INTEGER,"
-                    + FIELD_GESTURE_XAXIS + " REAL,"
-                    + FIELD_GESTURE_YAXIS + " REAL,"
-                    + FIELD_GESTURE_ZAXIS + " REAL)")
-
-            val UPDATE_TABLE_GESTURES = "DROP TABLE IF EXISTS $TABLE_GESTURES"
-        }
-    }
     abstract class Effects{
         companion object {
             val TABLE_EFFECTS = "EFFECTS"
@@ -84,17 +53,20 @@ class Tables {
             val TABLE_LINKS = "LINKS"
 
             val FIELD_LINKS_PK = "LINKS_PK"
-            val FIELD_GESTURE_FK = "GESTURE_FK"
+            val FIELD_GESTURE = "GESTURE"
             val FIELD_EFFECT_FK = "EFFECT_FK"
             val FIELD_PROFILE_FK = "PROFILE_FK"
             val FIELD_LINKS_LED = "LED"
+            val FIELD_DINAMIC_EFFECT = "DIN_EFFECT"
+
 
 
             val CREATE_TABLE_LINKS = ("CREATE TABLE " + TABLE_LINKS + "("
                     + FIELD_LINKS_PK + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + FIELD_PROFILE_FK + " INTEGER,"
-                    + FIELD_GESTURE_FK + " INTEGER,"
+                    + FIELD_GESTURE + " INTEGER,"
                     + FIELD_EFFECT_FK + " INTEGER,"
+                    + FIELD_DINAMIC_EFFECT+ " INTEGER,"
                     + FIELD_LINKS_LED+ " INTEGER)")
 
             val UPDATE_TABLE_LINKS = "DROP TABLE IF EXISTS $TABLE_LINKS"

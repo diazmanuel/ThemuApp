@@ -109,38 +109,50 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/txtLed"
+    <CheckBox
+        android:id="@+id/ckbDynParam"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
-        android:gravity="start"
-        android:text="@string/txt_led"
-        android:textColor="@color/txt"
-        android:textSize="20sp"
+        android:layout_height="wrap_content"
+        android:button="@null"
+        android:layout_marginTop="20dp"
+        android:textSize="25sp"
         android:textStyle="bold"
-
-
-        app:layout_constraintEnd_toStartOf="@+id/btnLed"
+        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+        android:text="@string/txt_dynparam"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnLed"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="30dp"
-        android:gravity="center"
-        android:textSize="20sp"
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/txtLed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:gravity="start"
+        android:text="@string/txt_led"
+        android:textColor="@color/txt"
+        android:textSize="30sp"
         android:textStyle="bold"
-        android:background="@color/txt"
+        app:layout_constraintEnd_toStartOf="@+id/imgLed"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ckbDynParam" />
+
+    <ImageView
+        android:id="@+id/imgLed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:src="@drawable/feedback_led_a"
+        tools:layout_editor_absoluteX="35dp"
+        tools:layout_editor_absoluteY="344dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/txtLed"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/ckbDynParam"/>
+
 
     <Button
         android:id="@+id/btnProfileAddLink"
@@ -151,5 +163,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtLed" />
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

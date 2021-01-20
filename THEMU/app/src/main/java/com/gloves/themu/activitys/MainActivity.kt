@@ -46,13 +46,11 @@ class MainActivity : AppCompatActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         navController = findNavController(R.id.hostFragment)
         appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.homeFragment, R.id.effectListFragment,R.id.gestureListFragment,
-            R.id.profileListFragment,R.id.recordListFragment,R.id.splashFragment))
+            R.id.homeFragment, R.id.effectListFragment,
+            R.id.profileListFragment,R.id.splashFragment))
         setupActionBarWithNavController(navController,appBarConfiguration)
         bottomNav.setupWithNavController(navController)
         setVisibility()
-
-
     }
 
     override fun onDestroy() {
@@ -68,9 +66,6 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when(destination.id){
-                R.id.sessionFragment -> {
-                    hideBottomNav()
-                }
                 R.id.splashFragment -> {
                     hideBottomNav()
                     hideActionBar()

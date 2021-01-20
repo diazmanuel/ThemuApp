@@ -6,37 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".fragments.HomeFragment">
 
-    <EditText
-        android:id="@+id/txtHomeName"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:gravity="center"
-        android:hint="@string/hint_Name_Session"
-        android:autofillHints="@string/hint_Name_Session"
-        android:textSize="25sp"
-        android:inputType="textEmailAddress"
-        android:textColor="@color/txt"
-        android:layout_marginTop="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
         android:layout_width="match_parent"
-        android:layout_marginTop="25dp"
         android:layout_height="wrap_content"
         android:hint="@string/hint_text_profile"
         android:textColorHint="@color/txt"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtHomeName"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0">
+
         <AutoCompleteTextView
             android:id="@+id/menuHome"
             android:layout_width="match_parent"
@@ -47,18 +30,153 @@
             tools:layout_editor_absoluteX="-8dp"
             tools:layout_editor_absoluteY="116dp" />
 
+
     </com.google.android.material.textfield.TextInputLayout>
+
+
+
+    <TextView
+        android:id="@+id/txtFlex"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="15dp"
+        android:gravity="end"
+        android:text="@string/txt_flex"
+        android:textColor="@color/txt"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/skBarFlex"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+
+    <SeekBar
+        android:id="@+id/skBarFlex"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="50dp"
+        android:layout_weight="0.5"
+        android:foregroundGravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/txtFlex"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+
+    <ImageView
+        android:id="@+id/imgGesture0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/gesture_off"
+        app:layout_constraintEnd_toStartOf="@+id/imgGesture1"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtFlex" />
+
+    <ImageView
+        android:id="@+id/imgGesture1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/gesture_off"
+        app:layout_constraintEnd_toStartOf="@+id/imgGesture2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imgGesture0"
+        app:layout_constraintTop_toBottomOf="@+id/txtFlex"  />
+
+    <ImageView
+        android:id="@+id/imgGesture2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/gesture_off"
+        app:layout_constraintEnd_toStartOf="@+id/imgGesture3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imgGesture1"
+        app:layout_constraintTop_toBottomOf="@+id/txtFlex" />
+
+    <ImageView
+        android:id="@+id/imgGesture3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/gesture_off"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imgGesture2"
+        app:layout_constraintTop_toBottomOf="@+id/txtFlex" />
+    <ImageView
+        android:id="@+id/imgGesture4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
+        android:src="@drawable/gesture_off"
+        app:layout_constraintEnd_toStartOf="@+id/imgGesture1"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgGesture0" />
+
+    <ImageView
+        android:id="@+id/imgGesture5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
+        android:src="@drawable/gesture_off"
+        app:layout_constraintEnd_toStartOf="@+id/imgGesture2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imgGesture0"
+        app:layout_constraintTop_toBottomOf="@+id/imgGesture0" />
+
+    <ImageView
+        android:id="@+id/imgGesture6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
+        android:src="@drawable/gesture_off"
+        app:layout_constraintEnd_toStartOf="@+id/imgGesture3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imgGesture1"
+        app:layout_constraintTop_toBottomOf="@+id/imgGesture0" />
+
+    <ImageView
+        android:id="@+id/imgGesture7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
+        android:src="@drawable/gesture_off"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imgGesture2"
+        app:layout_constraintTop_toBottomOf="@+id/imgGesture0" />
+
+    <Chronometer
+        android:id="@+id/chrSession"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:textSize="50sp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textColor="@color/chronometer"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgGesture4" />
+
     <Button
         android:id="@+id/btnStartSession"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="@string/btn_startSession"
         android:layout_gravity="bottom|center"
+        android:layout_marginBottom="5dp"
+        android:text="@string/btn_startSession"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintVertical_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.9" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

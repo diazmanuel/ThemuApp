@@ -11,6 +11,7 @@ import android.os.ParcelUuid
 import android.util.Log
 import java.nio.ByteBuffer
 import java.util.*
+import kotlin.experimental.and
 
 
 class Ble(val context: Context){
@@ -24,15 +25,13 @@ class Ble(val context: Context){
     private var bluetoothGatt: BluetoothGatt? = null
     var connected = false
     var fingers = intArrayOf(0, 0, 0, 0, 0)
-    var quaternion = floatArrayOf(0f, 0f, 0f, 0f)
-    var refVector = floatArrayOf(1f, 0f, 0f)
-    var newVector = floatArrayOf(0f, 0f, 0f)
-    var oldVector = floatArrayOf(0f, 0f, 0f)
-    var difVector = floatArrayOf(0f, 0f, 0f)
-    private var mcuFlag: Boolean = false
+    var gestures :BitSet = BitSet(8)
+
+    private var gesturesFlag: Boolean = false
     private var flexFlag: Boolean = false
     private var led = 0
-    private var process : ((IntArray, FloatArray) -> Int)? = null
+    private var process : ((IntArray, BitSet) -> Int)? = null
+    private var updateSymbol : ((IntArray, BitSet) -> Unit)? = null
 
     private val descQueue: Queue<Pair<Int,Boolean>> = LinkedList()
 
@@ -45,11 +44,9 @@ class Ble(val context: Context){
         filters.add(
             ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvFlex))).build()
         )
-        filters.add(ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvMCU))).build())
+        filters.add(ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvGesture))).build())
         filters.add(ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvRst))).build())
-        filters.add(
-            ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvBatery))).build()
-        )
+        filters.add(ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvBatery))).build())
         filters.add(ScanFilter.Builder().setServiceUuid(ParcelUuid(expandUuid(uuidSrvLed))).build())
 
         handler.postDelayed({
@@ -91,10 +88,10 @@ class Ble(val context: Context){
                     Log.i(TAG, "NOTIFICATION FLEX: ${it.second}")
                 }
                 1 -> {
-                    characteristic = bluetoothGatt?.getService(expandUuid(uuidSrvMCU))
-                        ?.getCharacteristic(expandUuid(uuidChrMCU))
+                    characteristic = bluetoothGatt?.getService(expandUuid(uuidSrvGesture))
+                        ?.getCharacteristic(expandUuid(uuidChrGesture))
                     bluetoothGatt?.setCharacteristicNotification(characteristic, it.second)
-                    descriptor = characteristic?.getDescriptor(expandUuid(uuidDscMCU))?.apply {
+                    descriptor = characteristic?.getDescriptor(expandUuid(uuidDscGesture))?.apply {
                         value = if (it.second) {
                             BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
                         } else {
@@ -102,7 +99,7 @@ class Ble(val context: Context){
                         }
                     }
                     bluetoothGatt?.writeDescriptor(descriptor)
-                    Log.i(TAG, "NOTIFICATION MCU: ${it.second}")
+                    Log.i(TAG, "NOTIFICATION Gesture: ${it.second}")
                 }
                 else -> {}
             }
@@ -202,61 +199,27 @@ class Ble(val context: Context){
         ) {
             when(characteristic?.uuid){
                 expandUuid(uuidChrFlex) -> setFlex(characteristic)
-                expandUuid(uuidChrMCU) -> setMCU(characteristic)
+                expandUuid(uuidChrGesture) -> setGesture(characteristic)
             }
         }
     }
-
-    private fun setMCU(characteristic: BluetoothGattCharacteristic) {
-        for(i in 0..3){
-            quaternion[i] =ByteBuffer.wrap(byteArrayOf(characteristic.value[3+(i*4)], characteristic.value[2+(i*4)], characteristic.value[1+(i*4)], characteristic.value[0+(i*4)])).getFloat(0)
-        }
-
-
-        Log.i(
-            TAG2, "current MCU data: " +
-                    quaternion[0].toString()+ " - " +
-                    quaternion[1].toString()+ " - " +
-                    quaternion[2].toString()+ " - " +
-                    quaternion[3].toString()
-        )
-
-        newVector=rotateVector(refVector,quaternion)
-        for (i in 0..2) {
-            difVector[i] = oldVector[i] - newVector[i]
-        }
-        oldVector=newVector
-
-
+    private fun setGesture(characteristic: BluetoothGattCharacteristic){
+        gestures = BitSet.valueOf(byteArrayOf(characteristic.value[0]))
         if(flexFlag){
-            process?.let {
-                if(it(fingers,newVector)!=led){
-                    led = it(fingers, newVector)
-                    writeCharacteristic(uuidSrvLed, uuidChrLed, led.toByte())
-                }
-            }
+            process?.let { setLed(it(fingers,gestures)) }
+            updateSymbol?.let { it(fingers,gestures) }
             flexFlag=false
-            mcuFlag = false
+            gesturesFlag = false
         }else{
-            mcuFlag = true
+            gesturesFlag = true
         }
+    }
 
-    }
-    fun openSession(myProcess: (IntArray, FloatArray) -> Int){
-        // invoke regular function using local name
-        process = myProcess
-    }
-    fun closeSession(){
-        process = null
-    }
 
     private fun setFlex(characteristic: BluetoothGattCharacteristic) {
-
         for (i in 0..4){
             fingers[i] = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, i)
         }
-
-
 
         Log.i(
             TAG2, "current flex data: " +
@@ -271,56 +234,55 @@ class Ble(val context: Context){
                     characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 4)
                         .toString()
         )
-        if(flexFlag){
-            process?.let {
-                if(it(fingers,newVector)!=led){
-                    led = it(fingers, newVector)
-                    writeCharacteristic(uuidSrvLed, uuidChrLed, led.toByte())
-                }
-            }
+        if(gesturesFlag){
+            process?.let { setLed(it(fingers,gestures)) }
+            updateSymbol?.let { it(fingers,gestures) }
             flexFlag = false
-            mcuFlag  = false
+            gesturesFlag  = false
         }else{
             flexFlag = true
         }
 
     }
+    fun setLed(newLed: Int){
+        if (led!=newLed){
+            writeCharacteristic(uuidSrvLed, uuidChrLed, newLed.toByte())
+            led=newLed
+        }
+    }
 
+    fun startUpdateSymbol(myUpdateSymbol: (IntArray, BitSet) -> Unit){
+        updateSymbol=myUpdateSymbol
+    }
+
+    fun startProcess(myProcess: (IntArray, BitSet) -> Int){
+        process = myProcess
+    }
+    fun stopProcess(){
+        process=null
+    }
+    fun stopUpdateSymbol(){
+        updateSymbol=null
+    }
 
     private fun expandUuid(shortCode16: String): UUID {
         return UUID.fromString("0000$shortCode16-${Companion.uuidBase}")
     }
-    private fun rotateVector(vector: FloatArray, hamiltonForm: FloatArray): FloatArray
-    {
-        val rotated = floatArrayOf(0f, 0f, 0f)
-        val r11 :Float = hamiltonForm[0]*hamiltonForm[0]+hamiltonForm[1]*hamiltonForm[1]-hamiltonForm[2]*hamiltonForm[2]-hamiltonForm[3]*hamiltonForm[3]
-        val r12 :Float = 2*(hamiltonForm[1]*hamiltonForm[2]-hamiltonForm[3]*hamiltonForm[0]);
-        val r13 :Float = 2*(hamiltonForm[1]*hamiltonForm[3]+hamiltonForm[2]*hamiltonForm[0]);
-        val r21 :Float = 2*(hamiltonForm[1]*hamiltonForm[2]+hamiltonForm[3]*hamiltonForm[0]);
-        val r22 :Float = hamiltonForm[0]*hamiltonForm[0]-hamiltonForm[1]*hamiltonForm[1]+hamiltonForm[2]*hamiltonForm[2]-hamiltonForm[3]*hamiltonForm[3];
-        val r23 :Float = 2*(hamiltonForm[2]*hamiltonForm[3]-hamiltonForm[1]*hamiltonForm[0]);
-        val r31 :Float = 2*(hamiltonForm[1]*hamiltonForm[3]-hamiltonForm[2]*hamiltonForm[0]);
-        val r32 :Float = 2*(hamiltonForm[2]*hamiltonForm[3]+hamiltonForm[1]*hamiltonForm[0]);
-        val r33 :Float = hamiltonForm[0]*hamiltonForm[0]-hamiltonForm[1]*hamiltonForm[1]-hamiltonForm[2]*hamiltonForm[2]+hamiltonForm[3]*hamiltonForm[3];
-        rotated[0] = r11*vector[0] + r12*vector[1] + r13*vector[2]
-        rotated[1] = r21*vector[0] + r22*vector[1] + r23*vector[2]
-        rotated[2] = r31*vector[0] + r32*vector[1] + r33*vector[2]
-        return rotated;
-    }
+
     companion object {
         const val uuidBase = "0000-1000-8000-00805F9B34FB"
         const val uuidSrvFlex ="0100"
         const val uuidSrvRst = "0200"
-        const val uuidSrvMCU = "0300"
+        const val uuidSrvGesture = "0300"
         const val uuidSrvLed = "0400"
         const val uuidSrvBatery = "180F"
         const val uuidChrFlex = "0110"
         const val uuidChrRst = "0210"
-        const val uuidChrMCU = "0310"
+        const val uuidChrGesture = "0310"
         const val uuidChrLed = "0410"
         const val uuidChrBatery = "2A19"
         const val uuidDscFlex = "2902"
-        const val uuidDscMCU = "2902"
+        const val uuidDscGesture = "2902"
         const val uuidDscRst = "0211"
         const val uuidDscLed = "0411"
         const val uuidDscBatery1 = "2901"

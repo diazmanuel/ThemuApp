@@ -6,26 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toDrawable
 import androidx.navigation.fragment.findNavController
 import com.gloves.themu.R
-import com.gloves.themu.R.array.feedback
 import com.gloves.themu.classes.Effect
-import com.gloves.themu.classes.Gesture
 import com.gloves.themu.classes.Link
 import com.gloves.themu.classes.Profile
 import com.gloves.themu.databases.ConexionSQLiteHelper
-import kotlinx.android.synthetic.main.fragment_gesture.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class ProfileFragment : Fragment() {
     private var id:String = "0"
     private var db: ConexionSQLiteHelper? = null
-    private var gestures = emptyList<Gesture>()
     private var effects = emptyList<Effect>()
     private var links  = mutableListOf<Link>()
-    private var auxGesture : Gesture? = null
+    private var auxGesture : Int? = null
     private var auxEffect : Effect? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +29,7 @@ class ProfileFragment : Fragment() {
         }
         db= ConexionSQLiteHelper(requireContext())
         effects = db!!.readEffects()
-        gestures = db!!.readGestures()
+
 
     }
     override fun onCreateView(
@@ -51,24 +45,43 @@ class ProfileFragment : Fragment() {
         if (!id.toBoolean()) {
             btnProfileSave.text= getString(R.string.btn_create)
         }
-        btnLed.setOnClickListener {
+
+        imgLed.setOnClickListener {
             feedbackLed++
             feedbackLed = feedbackLed.rem(8)
-            btnLed.background = resources.getIntArray(feedback)[feedbackLed].toDrawable()
+            when (feedbackLed) {
+                0 -> imgLed.setImageResource(R.drawable.feedback_led_a)
+                1 -> imgLed.setImageResource(R.drawable.feedback_led_b)
+                2 -> imgLed.setImageResource(R.drawable.feedback_led_c)
+                3 -> imgLed.setImageResource(R.drawable.feedback_led_d)
+                4 -> imgLed.setImageResource(R.drawable.feedback_led_e)
+                5 -> imgLed.setImageResource(R.drawable.feedback_led_f)
+                6 -> imgLed.setImageResource(R.drawable.feedback_led_g)
+                7 -> imgLed.setImageResource(R.drawable.feedback_led_h)
+            }
         }
         menuProfileEffect.setAdapter(ArrayAdapter(requireContext(),R.layout.dropdown_menu_popup_item,effects.map { it.usersName }))
         menuProfileEffect.inputType = 0
-        menuProfileEffect.setOnItemClickListener { parent, view, position, id -> auxEffect = effects[position] }
-        menuProfileGesture.setAdapter(ArrayAdapter(requireContext(),R.layout.dropdown_menu_popup_item,gestures.map { it.usersName }))
+        menuProfileEffect.setOnItemClickListener { _, _, position, _ -> auxEffect = effects[position] }
+        menuProfileGesture.setAdapter(ArrayAdapter(requireContext(),R.layout.dropdown_menu_popup_item,resources.getStringArray(R.array.gestures)))
         menuProfileGesture.inputType = 0
-        menuProfileGesture.setOnItemClickListener { parent, view, position, id -> auxGesture= gestures[position] }
+        menuProfileGesture.setOnItemClickListener { _, _, position, _ -> auxGesture= position }
         btnProfileAddLink.setOnClickListener {
             if(auxEffect != null && auxGesture != null){
-                links.add(Link(auxGesture!!, auxEffect!!, feedbackLed,0))
+                links.add(
+                        Link(
+                            auxGesture!!,
+                            auxEffect!!,
+                            feedbackLed,
+                            0,
+                            if(ckbDynParam.isChecked) 1 else 0
+                            )
+                        )
+                ckbDynParam.isChecked=false
                 auxEffect= null
                 auxGesture= null
                 feedbackLed = 0
-                btnLed.background = resources.getIntArray(feedback)[feedbackLed].toDrawable()
+                imgLed.setImageResource(R.drawable.feedback_led_a)
                 menuProfileGesture.text.clear()
                 menuProfileGesture.clearFocus()
                 menuProfileEffect.text.clear()

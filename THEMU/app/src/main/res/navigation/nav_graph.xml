@@ -21,32 +21,10 @@
             app:popExitAnim="@anim/fragment_close_exit" />
     </fragment>
     <fragment
-        android:id="@+id/gestureFragment"
-        android:name="com.gloves.themu.fragments.GestureFragment"
-        android:label="@string/lbl_frg_gesture"
-        tools:layout="@layout/fragment_gesture" />
-    <fragment
-        android:id="@+id/gestureListFragment"
-        android:name="com.gloves.themu.fragments.GestureListFragment"
-        android:label="@string/lbl_frg_gesture_list"
-        tools:layout="@layout/fragment_gesture_list" >
-        <action
-            android:id="@+id/action_gestureListFragment_to_gestureFragment"
-            app:destination="@id/gestureFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-    </fragment>
-    <fragment
         android:id="@+id/homeFragment"
         android:name="com.gloves.themu.fragments.HomeFragment"
         android:label="@string/lbl_frg_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_homeFragment_to_sessionFragment"
-            app:destination="@id/sessionFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-    </fragment>
+        tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.gloves.themu.fragments.ProfileFragment"
@@ -63,27 +41,6 @@
             app:enterAnim="@anim/fragment_open_enter"
             app:popExitAnim="@anim/fragment_close_exit" />
     </fragment>
-    <fragment
-        android:id="@+id/recordFragment"
-        android:name="com.gloves.themu.fragments.RecordFragment"
-        android:label="@string/lbl_frg_record"
-        tools:layout="@layout/fragment_record" />
-    <fragment
-        android:id="@+id/recordListFragment"
-        android:name="com.gloves.themu.fragments.RecordListFragment"
-        android:label="@string/lbl_frg_record_list"
-        tools:layout="@layout/fragment_record_list" >
-        <action
-            android:id="@+id/action_recordListFragment_to_recordFragment"
-            app:destination="@id/recordFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-    </fragment>
-    <fragment
-        android:id="@+id/sessionFragment"
-        android:name="com.gloves.themu.fragments.SessionFragment"
-        android:label="@string/lbl_frg_session"
-        tools:layout="@layout/fragment_session" />
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.gloves.themu.fragments.SplashFragment"

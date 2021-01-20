@@ -22,8 +22,7 @@ class ConexionSQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        db!!.execSQL(Tables.Gestures.CREATE_TABLE_GESTURES)
-        db.execSQL(Tables.Effects.CREATE_TABLE_EFFECTS)
+        db!!.execSQL(Tables.Effects.CREATE_TABLE_EFFECTS)
         db.execSQL(Tables.Parameters.CREATE_TABLE_PARAMETRES)
         db.execSQL(Tables.Profile.CREATE_TABLE_PROFILES)
         db.execSQL(Tables.Links.CREATE_TABLE_LINKS)
@@ -32,26 +31,13 @@ class ConexionSQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        db!!.execSQL(Tables.Gestures.UPDATE_TABLE_GESTURES)
-        db.execSQL(Tables.Effects.UPDATE_TABLE_EFFECTS)
+        db!!.execSQL(Tables.Effects.UPDATE_TABLE_EFFECTS)
         db.execSQL(Tables.Parameters.UPDATE_TABLE_PARAMETRES)
         db.execSQL(Tables.Profile.UPDATE_TABLE_PROFILES)
         db.execSQL(Tables.Links.UPDATE_TABLE_LINKS)
         onCreate(db)
     }
-    fun insertGesture(gesture : Gesture){
-        values.put(Tables.Gestures.FIELD_GESTURE_USERSNAME,gesture.usersName)
-        values.put(Tables.Gestures.FIELD_GESTURE_LITTLE,gesture.littleFinger)
-        values.put(Tables.Gestures.FIELD_GESTURE_RING,gesture.ringFinger)
-        values.put(Tables.Gestures.FIELD_GESTURE_MIDDLE,gesture.middleFinger)
-        values.put(Tables.Gestures.FIELD_GESTURE_INDEX,gesture.indexFinger)
-        values.put(Tables.Gestures.FIELD_GESTURE_THUMB,gesture.thumbFinger)
-        values.put(Tables.Gestures.FIELD_GESTURE_XAXIS,gesture.xAxis)
-        values.put(Tables.Gestures.FIELD_GESTURE_YAXIS,gesture.yAxis)
-        values.put(Tables.Gestures.FIELD_GESTURE_ZAXIS,gesture.zAxis)
-        db.insert(Tables.Gestures.TABLE_GESTURES,null,values)
-        values.clear()
-    }
+
     fun insertEffect(effect : Effect){
         //para crear el efecto tomo el nombre del effecto de la base de datos
         //y obtengo un effect descritor del native interface //effectDescriptor =  NativeInterface.effectDescriptionMap[effectName]
@@ -90,45 +76,18 @@ class ConexionSQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE
             ,null)
         cursor.moveToFirst()
         profile.profilePK = cursor.getInt(0)
+        cursor.close()
         for (link in profile.links){
             values.put(Tables.Links.FIELD_PROFILE_FK,profile.profilePK)
             values.put(Tables.Links.FIELD_EFFECT_FK,link.effect.effectPK)
-            values.put(Tables.Links.FIELD_GESTURE_FK,link.gesture.gesturePK)
+            values.put(Tables.Links.FIELD_GESTURE,link.gesture)
             values.put(Tables.Links.FIELD_LINKS_LED,link.led)
+            values.put(Tables.Links.FIELD_DINAMIC_EFFECT,link.dynEffect)
             db.insert(Tables.Links.TABLE_LINKS,null,values)
             values.clear()
         }
     }
 
-
-    fun readGestures() : List<Gesture>  {
-        val gestures: MutableList<Gesture> = mutableListOf()
-        val cursor  = db.rawQuery(
-            "SELECT * FROM "+
-                    Tables.Gestures.TABLE_GESTURES
-        ,null)
-        if(cursor.moveToFirst()) {
-            do {
-                gestures.add(
-                    Gesture(
-                        cursor.getInt(0),
-                        cursor.getString(1),
-                        cursor.getInt(2),
-                        cursor.getInt(3),
-                        cursor.getInt(4),
-                        cursor.getInt(5),
-                        cursor.getInt(6),
-                        cursor.getFloat(7),
-                        cursor.getFloat(8),
-                        cursor.getFloat(9)
-                    )
-                )
-                cursor.getString(0)
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
-        return gestures
-    }
     fun readEffects(): List<Effect>{
         val effects: MutableList<Effect> = mutableListOf()
         var effectAux : Effect
@@ -182,8 +141,6 @@ class ConexionSQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE
 
     fun readProfiles(): List<Profile>{
         val profiles = mutableListOf<Profile>()
-
-        val gestures = readGestures()
         val effects = readEffects()
 
         //SELECT PROFILES.*,LINKS.* FROM LINKS JOIN PROFILES ON LINKS.PROFILE_FK = PROFILES.PROFILE_PK ORDER BY LINKS.LINKS_PK ASC
@@ -222,10 +179,11 @@ class ConexionSQLiteHelper(context: Context): SQLiteOpenHelper(context, DATABASE
                 }
                 profiles.last().links.add(
                     Link(
-                        gestures.find { it.gesturePK == cursor.getInt(4) }!!,
+                        cursor.getInt(4),
                         effects.find { it.effectPK == cursor.getInt(5)}!!,
-                        cursor.getInt(6),
-                        cursor.getInt(2)
+                        cursor.getInt(7),
+                        cursor.getInt(2),
+                        cursor.getInt(6)
                     )
                 )
             }while (cursor.moveToNext())

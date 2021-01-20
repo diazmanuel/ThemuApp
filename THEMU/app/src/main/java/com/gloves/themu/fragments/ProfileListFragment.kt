@@ -8,12 +8,10 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gloves.themu.R
-import com.gloves.themu.adapters.GestureRecyclerAdapter
 import com.gloves.themu.adapters.ProfileRecyclerAdapter
 import com.gloves.themu.adapters.TopSpacingItemDecoration
 import com.gloves.themu.classes.Profile
 import com.gloves.themu.databases.ConexionSQLiteHelper
-import kotlinx.android.synthetic.main.fragment_gesture_list.*
 import kotlinx.android.synthetic.main.fragment_profile_list.*
 
 class ProfileListFragment : Fragment() {
@@ -25,10 +23,7 @@ class ProfileListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         db= ConexionSQLiteHelper(requireContext())
-
     }
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

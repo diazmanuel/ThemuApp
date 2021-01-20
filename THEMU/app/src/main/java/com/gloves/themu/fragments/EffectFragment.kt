@@ -1,7 +1,5 @@
 package com.gloves.themu.fragments
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -9,15 +7,12 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.gloves.themu.R
 import com.gloves.themu.classes.Effect
 import com.gloves.themu.classes.NativeInterface
 import com.gloves.themu.databases.ConexionSQLiteHelper
 import kotlinx.android.synthetic.main.fragment_effect.*
-import kotlinx.android.synthetic.main.fragment_gesture.*
-import kotlinx.android.synthetic.main.param_effects.*
 import java.util.*
 import kotlin.concurrent.timerTask
 

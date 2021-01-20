@@ -4,15 +4,13 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
-import android.util.Log
+import android.os.Looper                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -144,7 +142,11 @@ class SplashFragment : Fragment() {
                     }.create().show()
                 }else{
                     if ((activity as MainActivity).myBle.isConnected()) {
-                        findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
+                        Handler().postDelayed({
+                            (activity as MainActivity).myBle.notify(true)
+                            findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
+                        }, 1000)
+
                     }else {
                         loop.postDelayed(this, timeStep)
                     }
